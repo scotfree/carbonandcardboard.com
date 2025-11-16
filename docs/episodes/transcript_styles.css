@@ -1,0 +1,137 @@
+/* Transcript Styles */
+
+body {
+    background-color: #0a1628;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.transcript-container {
+    background-color: #112240;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+    color: #64ffda;
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.speaker-section {
+    margin-bottom: 25px;
+    padding: 15px;
+    border-radius: 6px;
+    transition: transform 0.2s ease;
+}
+
+.speaker-section:hover {
+    transform: translateX(5px);
+}
+
+.speaker-header {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.speaker-text {
+    padding-left: 20px;
+    margin-top: 8px;
+}
+
+/* Speaker 1 - Orange/Amber tones */
+.speaker-1 .speaker-header {
+    color: #ffa500;
+    background-color: rgba(255, 165, 0, 0.15);
+}
+
+.speaker-1 .speaker-text {
+    color: #cc8400;
+}
+
+/* Speaker 2 - Green/Teal tones */
+.speaker-2 .speaker-header {
+    color: #00ff88;
+    background-color: rgba(0, 255, 136, 0.15);
+}
+
+.speaker-2 .speaker-text {
+    color: #00cc6e;
+}
+
+/* Speaker 3 - Purple/Violet tones */
+.speaker-3 .speaker-header {
+    color: #bb86fc;
+    background-color: rgba(187, 134, 252, 0.15);
+}
+
+.speaker-3 .speaker-text {
+    color: #9568d1;
+}
+
+/* Speaker 4 - Pink/Rose tones */
+.speaker-4 .speaker-header {
+    color: #ff69b4;
+    background-color: rgba(255, 105, 180, 0.15);
+}
+
+.speaker-4 .speaker-text {
+    color: #cc5490;
+}
+
+/* Speaker 5 - Cyan/Sky tones */
+.speaker-5 .speaker-header {
+    color: #00d4ff;
+    background-color: rgba(0, 212, 255, 0.15);
+}
+
+.speaker-5 .speaker-text {
+    color: #00a8cc;
+}
+
+/* Speaker 6 - Yellow/Gold tones */
+.speaker-6 .speaker-header {
+    color: #ffd700;
+    background-color: rgba(255, 215, 0, 0.15);
+}
+
+.speaker-6 .speaker-text {
+    color: #ccac00;
+}
+
+/* Speaker 7 - Red/Coral tones */
+.speaker-7 .speaker-header {
+    color: #ff6b6b;
+    background-color: rgba(255, 107, 107, 0.15);
+}
+
+.speaker-7 .speaker-text {
+    color: #cc5656;
+}
+
+/* Speaker 8 - Blue/Azure tones */
+.speaker-8 .speaker-header {
+    color: #4d9fff;
+    background-color: rgba(77, 159, 255, 0.15);
+}
+
+.speaker-8 .speaker-text {
+    color: #3d7fcc;
+}
+
+.timestamp {
+    font-style: italic;
+    opacity: 0.8;
+}
+
