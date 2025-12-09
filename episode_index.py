@@ -2,172 +2,128 @@
 """
 Episode Index Generator
 
-This script reads transcript HTML files from the episodes directory and generates
-an index.html file with links to all episodes.
+This script reads episode data from episodes.json and generates:
+1. episodes/index.html - Episode list page
+2. index.html - Main home page
 
 Usage:
     python episode_index.py
-
-The script will:
-1. Scan the 'episodes' directory for transcript_ep*.html files
-2. Extract episode information from each file
-3. Generate an index.html with a table of all episodes
 """
 
-import os
-import re
+import json
 from pathlib import Path
 
 
-def find_transcript_files(episodes_dir):
-    """
-    Find all transcript HTML files in the episodes directory.
-    
-    Returns:
-        list: Sorted list of transcript file paths
-    """
-    transcript_files = []
-    pattern = re.compile(r'^transcript_ep(\d+)\.html$')
-    
-    for filename in os.listdir(episodes_dir):
-        match = pattern.match(filename)
-        if match:
-            episode_num = int(match.group(1))
-            transcript_files.append({
-                'filename': filename,
-                'episode_num': episode_num,
-                'path': os.path.join(episodes_dir, filename)
-            })
-    
-    # Sort by episode number
-    transcript_files.sort(key=lambda x: x['episode_num'])
-    return transcript_files
+# Shared CSS styles for episode tables and buttons
+TABLE_STYLES = '''
+        .episode-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .episode-table th,
+        .episode-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.2);
+        }
+        .episode-table th {
+            color: #64ffda;
+            font-size: 1.1em;
+            border-bottom: 2px solid rgba(100, 255, 218, 0.4);
+        }
+        .episode-table tr:hover {
+            background-color: rgba(100, 255, 218, 0.05);
+        }
+        .episode-name {
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+        .episode-summary {
+            color: #a0a0a0;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .link-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 2px 4px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+        .link-transcript {
+            background-color: rgba(100, 255, 218, 0.15);
+            color: #64ffda;
+        }
+        .link-transcript:hover {
+            background-color: rgba(100, 255, 218, 0.3);
+            text-decoration: none;
+        }
+        .link-spotify {
+            background-color: rgba(30, 215, 96, 0.15);
+            color: #1ed760;
+        }
+        .link-spotify:hover {
+            background-color: rgba(30, 215, 96, 0.3);
+            text-decoration: none;
+        }
+        .link-youtube {
+            background-color: rgba(255, 0, 0, 0.15);
+            color: #ff4444;
+        }
+        .link-youtube:hover {
+            background-color: rgba(255, 0, 0, 0.3);
+            text-decoration: none;
+        }
+        .link-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 25px 0;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        .link-bar .link-btn {
+            padding: 12px 24px;
+            font-size: 1em;
+        }
+        .description {
+            color: #b8c5d6;
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin: 20px 0;
+            text-align: center;
+        }
+'''
 
 
-def extract_episode_title(file_path):
-    """
-    Extract the episode title from a transcript HTML file.
-    
-    Returns:
-        str: The episode title (e.g., "Episode 1 Transcript")
-    """
-    with open(file_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    
-    # Try to extract from the <h1> tag
-    h1_match = re.search(r'<h1>(.+?)</h1>', content, re.IGNORECASE)
-    if h1_match:
-        title = h1_match.group(1)
-        # Remove "Carbon and Cardboard - " prefix if present
-        title = re.sub(r'^Carbon and Cardboard\s*-\s*', '', title, flags=re.IGNORECASE)
-        return title
-    
-    # Fallback: try to extract from <title> tag
-    title_match = re.search(r'<title>(.+?)</title>', content, re.IGNORECASE)
-    if title_match:
-        title = title_match.group(1)
-        title = re.sub(r'^Carbon and Cardboard\s*-\s*', '', title, flags=re.IGNORECASE)
-        return title
-    
-    return "Unknown Episode"
+def load_episodes(json_path):
+    """Load episode data from the JSON file."""
+    with open(json_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
 
-def generate_index_html(episodes, output_path, css_file='transcript_styles.css'):
-    """
-    Generate the index.html file with episode listing.
-    """
-    html_parts = [
-        '<!DOCTYPE html>',
-        '<html lang="en">',
-        '<head>',
-        '    <meta charset="UTF-8">',
-        '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-        '    <title>Carbon and Cardboard - Episode List</title>',
-        f'    <link rel="stylesheet" href="{css_file}">',
-        '    <style>',
-        '        .episode-table {',
-        '            width: 100%;',
-        '            border-collapse: collapse;',
-        '            margin-top: 20px;',
-        '        }',
-        '        .episode-table th,',
-        '        .episode-table td {',
-        '            padding: 15px;',
-        '            text-align: left;',
-        '            border-bottom: 1px solid rgba(100, 255, 218, 0.2);',
-        '        }',
-        '        .episode-table th {',
-        '            color: #64ffda;',
-        '            font-size: 1.1em;',
-        '            border-bottom: 2px solid rgba(100, 255, 218, 0.4);',
-        '        }',
-        '        .episode-table tr:hover {',
-        '            background-color: rgba(100, 255, 218, 0.05);',
-        '        }',
-        '        .episode-name {',
-        '            color: #e0e0e0;',
-        '            font-weight: 500;',
-        '        }',
-        '        .link-btn {',
-        '            display: inline-block;',
-        '            padding: 8px 16px;',
-        '            margin: 2px 4px;',
-        '            border-radius: 4px;',
-        '            text-decoration: none;',
-        '            font-size: 0.9em;',
-        '            transition: all 0.2s ease;',
-        '        }',
-        '        .link-transcript {',
-        '            background-color: rgba(100, 255, 218, 0.15);',
-        '            color: #64ffda;',
-        '        }',
-        '        .link-transcript:hover {',
-        '            background-color: rgba(100, 255, 218, 0.3);',
-        '            text-decoration: none;',
-        '        }',
-        '        .link-spotify {',
-        '            background-color: rgba(30, 215, 96, 0.15);',
-        '            color: #1ed760;',
-        '        }',
-        '        .link-spotify:hover {',
-        '            background-color: rgba(30, 215, 96, 0.3);',
-        '            text-decoration: none;',
-        '        }',
-        '        .link-youtube {',
-        '            background-color: rgba(255, 0, 0, 0.15);',
-        '            color: #ff4444;',
-        '        }',
-        '        .link-youtube:hover {',
-        '            background-color: rgba(255, 0, 0, 0.3);',
-        '            text-decoration: none;',
-        '        }',
-        '    </style>',
-        '</head>',
-        '<body>',
-        '    <div class="transcript-container">',
-        '        <h1>Carbon and Cardboard - Episode List</h1>',
-        '        <table class="episode-table">',
-        '            <thead>',
-        '                <tr>',
-        '                    <th>Episode</th>',
-        '                    <th>Links</th>',
-        '                </tr>',
-        '            </thead>',
-        '            <tbody>',
-    ]
-    
+def generate_episode_table(episodes, transcript_prefix=''):
+    """Generate HTML for the episode table."""
+    rows = []
     for episode in episodes:
-        episode_num = episode['episode_num']
+        ep_num = episode['episode_number']
         title = episode['title']
-        transcript_file = episode['filename']
+        summary = episode.get('summary', '')
+        spotify_url = episode.get('spotify_url', '#')
+        youtube_url = episode.get('youtube_url', '#')
+        transcript_file = f"{transcript_prefix}transcript_ep{ep_num}.html"
         
-        # Placeholder URLs - can be updated later
-        spotify_url = f"https://open.spotify.com/show/placeholder-episode-{episode_num}"
-        youtube_url = f"https://youtube.com/watch?v=placeholder-episode-{episode_num}"
-        
-        html_parts.extend([
+        rows.extend([
             '                <tr>',
-            f'                    <td class="episode-name">{title}</td>',
+            '                    <td>',
+            f'                        <div class="episode-name">Episode {ep_num}: {title}</div>',
+            f'                        <div class="episode-summary">{summary}</div>',
+            '                    </td>',
             '                    <td>',
             f'                        <a href="{transcript_file}" class="link-btn link-transcript">Transcript</a>',
             f'                        <a href="{spotify_url}" class="link-btn link-spotify" target="_blank">Spotify</a>',
@@ -176,61 +132,119 @@ def generate_index_html(episodes, output_path, css_file='transcript_styles.css')
             '                </tr>',
         ])
     
-    html_parts.extend([
+    return '\n'.join([
+        '        <table class="episode-table">',
+        '            <thead>',
+        '                <tr>',
+        '                    <th>Episode</th>',
+        '                    <th>Links</th>',
+        '                </tr>',
+        '            </thead>',
+        '            <tbody>',
+        '\n'.join(rows),
         '            </tbody>',
         '        </table>',
-        '    </div>',
-        '</body>',
-        '</html>'
     ])
+
+
+def generate_episodes_index(episodes, output_path, css_file='transcript_styles.css'):
+    """Generate the episodes/index.html file."""
+    html = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon and Cardboard - Episode List</title>
+    <link rel="stylesheet" href="{css_file}">
+    <style>{TABLE_STYLES}
+    </style>
+</head>
+<body>
+    <div class="transcript-container">
+        <h1>Carbon and Cardboard - Episode List</h1>
+{generate_episode_table(episodes)}
+    </div>
+</body>
+</html>'''
     
     with open(output_path, 'w', encoding='utf-8') as f:
-        f.write('\n'.join(html_parts))
+        f.write(html)
+
+
+def generate_home_page(episodes, output_path, css_file='episodes/transcript_styles.css'):
+    """Generate the main index.html home page."""
+    html = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon and Cardboard</title>
+    <link rel="stylesheet" href="{css_file}">
+    <style>{TABLE_STYLES}
+    </style>
+</head>
+<body>
+    <div class="transcript-container">
+        <h1>Carbon and Cardboard</h1>
+        
+        <p class="description">
+            A podcast exploring how board games can help us understand and talk about climate change.
+            We discuss game mechanics, educational design, and the ways that play can make complex
+            environmental concepts more accessible and engaging.
+        </p>
+        
+        <div class="link-bar">
+            <a href="https://open.spotify.com/show/placeholder" class="link-btn link-spotify" target="_blank">
+                Spotify
+            </a>
+            <a href="https://www.youtube.com/@placeholder" class="link-btn link-youtube" target="_blank">
+                YouTube
+            </a>
+            <a href="https://github.com/placeholder/carbonandcardboard" class="link-btn link-transcript" target="_blank">
+                GitHub
+            </a>
+        </div>
+        
+        <h2>Episodes</h2>
+{generate_episode_table(episodes, transcript_prefix='episodes/')}
+    </div>
+</body>
+</html>'''
+    
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write(html)
 
 
 def main():
-    """Main function to generate the episode index."""
+    """Main function to generate the episode indexes."""
     
-    # Determine the episodes directory (relative to script location)
     script_dir = Path(__file__).parent
     episodes_dir = script_dir / 'episodes'
+    json_path = episodes_dir / 'episodes.json'
     
-    if not episodes_dir.exists():
-        print(f"Error: Episodes directory '{episodes_dir}' not found.")
+    if not json_path.exists():
+        print(f"Error: {json_path} not found.")
         return 1
     
-    print(f"Scanning for transcript files in: {episodes_dir}")
+    print(f"Reading episodes from: {json_path}")
+    episodes = load_episodes(json_path)
+    print(f"Found {len(episodes)} episode(s)")
     
-    # Find transcript files
-    transcript_files = find_transcript_files(episodes_dir)
+    for ep in episodes:
+        print(f"  - Episode {ep['episode_number']}: {ep['title']}")
     
-    if not transcript_files:
-        print("No transcript files found (looking for transcript_ep*.html)")
-        return 1
+    # Generate episodes/index.html
+    episodes_index_path = episodes_dir / 'index.html'
+    generate_episodes_index(episodes, episodes_index_path)
+    print(f"\nEpisodes index generated: {episodes_index_path}")
     
-    print(f"Found {len(transcript_files)} transcript file(s):")
-    
-    # Extract episode information
-    episodes = []
-    for tf in transcript_files:
-        title = extract_episode_title(tf['path'])
-        episodes.append({
-            'filename': tf['filename'],
-            'episode_num': tf['episode_num'],
-            'title': title
-        })
-        print(f"  - Episode {tf['episode_num']}: {title}")
-    
-    # Generate index.html
-    output_path = episodes_dir / 'index.html'
-    generate_index_html(episodes, output_path)
-    
-    print(f"\nIndex file generated: {output_path}")
-    print(f"Make sure 'transcript_styles.css' is in the same directory!")
+    # Generate main index.html
+    home_path = script_dir / 'index.html'
+    generate_home_page(episodes, home_path)
+    print(f"Home page generated: {home_path}")
     
     return 0
 
 
 if __name__ == '__main__':
     exit(main())
-

@@ -29,6 +29,11 @@
             color: #e0e0e0;
             font-weight: 500;
         }
+        .episode-summary {
+            color: #a0a0a0;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
         .link-btn {
             display: inline-block;
             padding: 8px 16px;
@@ -62,6 +67,28 @@
             background-color: rgba(255, 0, 0, 0.3);
             text-decoration: none;
         }
+        .link-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 25px 0;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        .link-bar .link-btn {
+            padding: 12px 24px;
+            font-size: 1em;
+        }
+        .description {
+            color: #b8c5d6;
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin: 20px 0;
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
@@ -76,7 +103,10 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="episode-name">Episode 1 Transcript</td>
+                    <td>
+                        <div class="episode-name">Episode 1: Introduction and Thesis</div>
+                        <div class="episode-summary">We explore the thesis that board games can communicate ideas useful to understanding the climate crisis, discussing game mechanics, learning transfer, and how games create engaging ways to learn complex concepts.</div>
+                    </td>
                     <td>
                         <a href="transcript_ep1.html" class="link-btn link-transcript">Transcript</a>
                         <a href="https://open.spotify.com/show/placeholder-episode-1" class="link-btn link-spotify" target="_blank">Spotify</a>
@@ -84,7 +114,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="episode-name">Episode 2 Transcript</td>
+                    <td>
+                        <div class="episode-name">Episode 2: USA Has Left The Game</div>
+                        <div class="episode-summary">We play a little Daybreak.</div>
+                    </td>
                     <td>
                         <a href="transcript_ep2.html" class="link-btn link-transcript">Transcript</a>
                         <a href="https://open.spotify.com/show/placeholder-episode-2" class="link-btn link-spotify" target="_blank">Spotify</a>
@@ -92,7 +125,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="episode-name">Episode 3 Transcript</td>
+                    <td>
+                        <div class="episode-name">Episode 3: Daybreak designer Matt Leacock</div>
+                        <div class="episode-summary">An special gues!</div>
+                    </td>
                     <td>
                         <a href="transcript_ep3.html" class="link-btn link-transcript">Transcript</a>
                         <a href="https://open.spotify.com/show/placeholder-episode-3" class="link-btn link-spotify" target="_blank">Spotify</a>
