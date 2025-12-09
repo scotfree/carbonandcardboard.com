@@ -208,7 +208,8 @@ def generate_home_page(episodes, output_path, css_file='episodes/transcript_styl
         <p class="description">
             A podcast exploring board games as a way to talk about environment and the climate.
             We discuss game mechanics, educational design, and the ways that play can help engage with these complex topics.
-            We use many games as lenses into this rich space.
+            We use many games as lenses into this rich space, and started as part of the 
+            <A HREF="https://climatebase.org/fellowship">Climatebase Fellowship</A>.
         </p>
         
         <div class="link-bar">
@@ -246,6 +247,8 @@ def main():
     
     print(f"Reading episodes from: {json_path}")
     episodes = load_episodes(json_path)
+    # Sort by episode number descending (most recent first)
+    episodes.sort(key=lambda ep: ep['episode_number'], reverse=True)
     print(f"Found {len(episodes)} episode(s)")
     
     for ep in episodes:
