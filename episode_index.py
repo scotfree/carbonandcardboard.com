@@ -17,11 +17,13 @@ from pathlib import Path
 # Shared CSS styles for episode tables and buttons
 TABLE_STYLES = '''
         .brand-badge {
-            position: absolute;
-            top: 20px;
-            left: 20px;
+            display: block;
+            margin: 20px auto;
             width: 160px;
             height: auto;
+        }
+        h1 {
+            margin-top: 10px;
         }
         .episode-table {
             width: 100%;
@@ -176,9 +178,9 @@ def generate_episodes_index(episodes, output_path, css_file='transcript_styles.c
     </style>
 </head>
 <body>
-    <img src="../brand_badge.png" alt="Carbon and Cardboard" class="brand-badge">
     <div class="transcript-container">
         <h1>Carbon and Cardboard - Episode List</h1>
+        <img src="../brand_badge.png" alt="Carbon and Cardboard" class="brand-badge">
 {generate_episode_table(episodes)}
     </div>
 </body>
@@ -201,9 +203,9 @@ def generate_home_page(episodes, output_path, css_file='episodes/transcript_styl
     </style>
 </head>
 <body>
-    <img src="brand_badge.png" alt="Carbon and Cardboard" class="brand-badge">
     <div class="transcript-container">
         <h1>Carbon and Cardboard</h1>
+        <img src="brand_badge.png" alt="Carbon and Cardboard" class="brand-badge">
         
         <p class="description">
             A podcast exploring board games as a way to talk about environment and the climate.
